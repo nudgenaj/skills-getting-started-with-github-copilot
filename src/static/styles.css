@@ -132,6 +132,75 @@ button:hover {
   border: 1px solid #bee5eb;
 }
 
+/* Participants section styling */
+.participants {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #f1f5ff;
+  border: 1px solid #dfe8ff;
+  border-radius: 6px;
+}
+
+.participants h5 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #0d47a1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Bulleted list */
+.participants ul {
+  list-style: none; /* hide default bullets */
+  margin: 0;
+  padding-left: 0;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.participants li {
+  padding: 6px 4px;
+  font-size: 14px;
+  color: #1a237e;
+  border-bottom: 1px dashed rgba(26, 35, 126, 0.06);
+}
+
+/* Participant item layout */
+.participant-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.participant-email {
+  word-break: break-all;
+}
+
+/* Delete button */
+.delete-participant {
+  background: transparent;
+  border: none;
+  color: #c62828;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.delete-participant:hover {
+  background: rgba(198, 40, 40, 0.08);
+}
+
+/* Empty state */
+.participants .no-participants {
+  font-style: italic;
+  color: #666;
+  list-style: none;
+  padding-left: 0;
+}
+
 .hidden {
   display: none;
 }
