@@ -152,9 +152,9 @@ button:hover {
 
 /* Bulleted list */
 .participants ul {
-  list-style: disc;
+  list-style: none; /* hide default bullets */
   margin: 0;
-  padding-left: 20px;
+  padding-left: 0;
   max-height: 120px;
   overflow-y: auto;
 }
@@ -164,6 +164,33 @@ button:hover {
   font-size: 14px;
   color: #1a237e;
   border-bottom: 1px dashed rgba(26, 35, 126, 0.06);
+}
+
+/* Participant item layout */
+.participant-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.participant-email {
+  word-break: break-all;
+}
+
+/* Delete button */
+.delete-participant {
+  background: transparent;
+  border: none;
+  color: #c62828;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.delete-participant:hover {
+  background: rgba(198, 40, 40, 0.08);
 }
 
 /* Empty state */

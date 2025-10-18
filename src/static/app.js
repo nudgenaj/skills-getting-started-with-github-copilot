@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
-      const response = await fetch("/activities");
+  const response = await fetch("/activities", { cache: "no-store" });
       const activities = await response.json();
 
       // Clear loading message / existing cards
@@ -37,9 +37,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const spotsLeft = details.max_participants - participantsArray.length;
 
         // Build participants list markup
+        // Build participants list markup with delete buttons
         const participantsMarkup =
           participantsArray.length > 0
-            ? participantsArray.map((p) => `<li>${escapeHtml(p)}</li>`).join("")
+            ? participantsArray
+                .map(
+                  (p) =>
+                    `<li class="participant-item" data-email="${escapeHtml(p)}"><span class="participant-email">${escapeHtml(
+                      p
+                    )}</span> <button class="delete-participant" title="Remove participant" aria-label="Remove ${escapeHtml(
+                      p
+                    )}">✖</button></li>`
+                )
+                .join("")
             : `<li class="no-participants">No participants yet</li>`;
 
         activityCard.innerHTML = `
@@ -49,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
           <div class="participants">
             <h5>Participants (${participantsArray.length})</h5>
-            <ul>
+            <ul class="participants-list">
               ${participantsMarkup}
             </ul>
           </div>
@@ -62,6 +72,44 @@ document.addEventListener("DOMContentLoaded", () => {
         option.value = name;
         option.textContent = name;
         activitySelect.appendChild(option);
+      });
+
+      // Attach click handlers for delete buttons (delegation)
+      document.querySelectorAll(".delete-participant").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          const li = e.target.closest(".participant-item");
+          if (!li) return;
+          const email = li.getAttribute("data-email");
+          const activityName = li.closest(".activity-card").querySelector("h4").textContent;
+
+          try {
+            const resp = await fetch(
+              `/activities/${encodeURIComponent(activityName)}/unregister?email=${encodeURIComponent(email)}`,
+              { method: "DELETE" }
+            );
+
+            const resJson = await resp.json();
+            if (resp.ok) {
+              // show success message
+              messageDiv.textContent = resJson.message;
+              messageDiv.className = "message success";
+              messageDiv.classList.remove("hidden");
+              // Refresh activities
+              fetchActivities();
+            } else {
+              messageDiv.textContent = resJson.detail || "Failed to remove participant";
+              messageDiv.className = "message error";
+              messageDiv.classList.remove("hidden");
+            }
+
+            setTimeout(() => messageDiv.classList.add("hidden"), 5000);
+          } catch (err) {
+            console.error("Error removing participant:", err);
+            messageDiv.textContent = "Failed to remove participant. Please try again.";
+            messageDiv.className = "message error";
+            messageDiv.classList.remove("hidden");
+          }
+        });
       });
     } catch (error) {
       activitiesList.innerHTML = "<p>Failed to load activities. Please try again later.</p>";
@@ -88,14 +136,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (response.ok) {
         messageDiv.textContent = result.message;
-        messageDiv.className = "success";
+        // keep message styling consistent with other flows
+        messageDiv.className = "message success";
         signupForm.reset();
 
         // Refresh activities to show the new participant immediately
-        fetchActivities();
+        // Await to ensure the UI is updated before continuing
+        await fetchActivities();
       } else {
         messageDiv.textContent = result.detail || "An error occurred";
-        messageDiv.className = "error";
+        messageDiv.className = "message error";
       }
 
       messageDiv.classList.remove("hidden");
