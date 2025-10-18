@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const participantsArray = Array.isArray(details.participants) ? details.participants : [];
         const spotsLeft = details.max_participants - participantsArray.length;
 
-        // Build participants list markup
         // Build participants list markup with delete buttons
         const participantsMarkup =
           participantsArray.length > 0
